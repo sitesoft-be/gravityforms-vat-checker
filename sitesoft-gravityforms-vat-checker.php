@@ -21,6 +21,8 @@ defined('ABSPATH') || exit;
 define('SITESOFT_GF_URL', plugin_dir_url(__FILE__));
 define('SITESOFT_GF_DIR', plugin_dir_path(__FILE__));
 
+require_once SITESOFT_GF_DIR . 'update-checker.php';
+
 add_action('gform_loaded', function () {
     require_once SITESOFT_GF_DIR . 'includes/class-euvat-field.php';
     require_once SITESOFT_GF_DIR . 'includes/class-ajax-handler.php';
