@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
   $("body").on("blur", ".sitesoft-euvat-field", function () {
     const input = $(this);
     const vat = input.val().trim();
-    const container = input.closest(".gfield"); // GF container div
+    const container = input.closest(".gfield");
 
     container.find(".vat-error").remove();
 
@@ -25,6 +25,8 @@ jQuery(document).ready(function ($) {
             response.data;
           const vatField = $(".sitesoft-euvat-field");
           const form = vatField.closest("form");
+          input.addClass("vat-valid");
+          input.data("vat-valid", true);
 
           const mappings = {
             name: vatField.data("map-name"),
@@ -41,8 +43,9 @@ jQuery(document).ready(function ($) {
             const street = address.street + " " + (address.number ?? "");
             form.find(`[name="${mappings.street}"]`).val(street);
           }
-          if (mappings.zip && address?.zip) {
-            form.find(`[name="${mappings.zip}"]`).val(address.zip);
+          console.log(address);
+          if (mappings.zip && address?.zip_code) {
+            form.find(`[name="${mappings.zip}"]`).val(address.zip_code);
           }
           if (mappings.city && address?.city) {
             form.find(`[name="${mappings.city}"]`).val(address.city);
@@ -51,8 +54,7 @@ jQuery(document).ready(function ($) {
             form.find(`[name="${mappings.country}"]`).val(address.country);
           }
         } else {
-          input.css("border-color", "red");
-          input.data("vat-valid", false);
+          input.addClass("vat-invalid");
 
           container.append(
             '<div class="gfield_description validation_message vat-error" style="color: red;">' +
@@ -64,20 +66,20 @@ jQuery(document).ready(function ($) {
     );
   });
 
-  $("form").on("submit", function (e) {
-    const vatFields = $(this).find("input.gf-vat-field");
-    let allValid = true;
-
-    vatFields.each(function () {
-      const valid = $(this).data("vat-valid");
-      if (valid === false || typeof valid === "undefined") {
-        allValid = false;
-        $(this).trigger("blur");
-      }
-    });
-
-    if (!allValid) {
-      e.preventDefault();
-    }
-  });
+  // $("form").on("submit", function (e) {
+  //   const vatFields = $(this).find("input.gf-vat-field");
+  //   let allValid = true;
+  //
+  //   vatFields.each(function () {
+  //     const valid = $(this).data("vat-valid");
+  //     if (valid === false || typeof valid === "undefined") {
+  //       allValid = false;
+  //       $(this).trigger("blur");
+  //     }
+  //   });
+  //
+  //   if (!allValid) {
+  //     e.preventDefault();
+  //   }
+  // });
 });

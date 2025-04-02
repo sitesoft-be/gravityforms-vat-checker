@@ -1,0 +1,14 @@
+{
+  "name": "sitesoft/gravityforms-vat-checker",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Sander Rebry",
+      "email": "info@studiowebvision.be"
+    }
+  ],
+  "require": {},
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
