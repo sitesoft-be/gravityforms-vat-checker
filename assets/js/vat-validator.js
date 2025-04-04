@@ -1,5 +1,13 @@
 jQuery(document).ready(function ($) {
-  $("body").on("blur", ".sitesoft-euvat-field", function () {
+  const $euVatField = ".sitesoft-euvat-field";
+
+  $("body").on("input", $euVatField, function () {
+    const input = $(this);
+    const container = input.closest(".gfield");
+    $(container).find(".icon-wrapper").css("display", "none");
+  });
+
+  $("body").on("blur", $euVatField, function () {
     const input = $(this);
     const vat = input.val().trim();
     const container = input.closest(".gfield");
@@ -27,6 +35,16 @@ jQuery(document).ready(function ($) {
           const form = vatField.closest("form");
           input.addClass("vat-valid");
           input.data("vat-valid", true);
+          $(container)
+            .find(".icon-wrapper")
+            .css("display", "block")
+            .find(".invalid")
+            .css("display", "none");
+          $(container)
+            .find(".icon-wrapper")
+            .css("display", "block")
+            .find(".checkmark")
+            .css("display", "block");
 
           const mappings = {
             name: vatField.data("map-name"),
@@ -55,6 +73,12 @@ jQuery(document).ready(function ($) {
           }
         } else {
           input.addClass("vat-invalid");
+          $(container).find(".checkmark").css("display", "none");
+          $(container)
+            .find(".icon-wrapper")
+            .css("display", "block")
+            .find(".invalid")
+            .css("display", "block");
 
           container.append(
             '<div class="gfield_description validation_message vat-error" style="color: red;">' +
