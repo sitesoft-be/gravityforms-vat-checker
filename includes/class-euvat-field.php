@@ -22,7 +22,6 @@ class Field_EU_VAT extends \GF_Field_Text
 		return rgpost($input_name);
 	}
 
-
 	public function get_form_editor_field_title(): string
     {
         return esc_attr__('EU VAT Field', 'sitesoft-eu-vat');
@@ -40,12 +39,13 @@ class Field_EU_VAT extends \GF_Field_Text
 
     public function get_field_input($form, $value = '', $entry = null): string
     {
-        $id          = (int) $this->id;
-        $form_id         = absint($form['id']);
-        $is_entry_detail = $this->is_entry_detail();
-        $is_form_editor  = $this->is_form_editor();
+	    $form_id         = absint( $form['id'] );
+	    $is_entry_detail = $this->is_entry_detail();
+	    $is_form_editor  = $this->is_form_editor();
+	    $id          = (int) $this->id;
 
         $field_id    = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+
         $value        = esc_attr($value);
         $size         = $this->size;
         $class_suffix = $is_entry_detail ? '_admin' : '';
@@ -74,25 +74,25 @@ class Field_EU_VAT extends \GF_Field_Text
             ], esc_html__('Separate tags with commas', 'gravityforms'), $form_id) . '</p>';
         }
 
-        return "<div class='ginput_container ginput_container_email ginput_single_euvat' style='position: relative;'>
-			    <input 
-			        name='{$field_id}' 
-			        id='{$field_id}' 
-			        type='text' 
-			        value='{$value}' 
-			        class='" . esc_attr(implode(" ", $class)) . "' 
+        return "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;'>
+			    <input
+			        name='input_{$id}'
+			        id='{$field_id}'
+			        type='text'
+			        value='{$value}'
+			        class='" . esc_attr(implode(" ", $class)) . "'
 			        data-map-name='" . esc_attr($this->euvatNameField) . "'
 			        data-map-street='" . esc_attr($this->euvatStreetField) . "'
 			        data-map-zip='" . esc_attr($this->euvatZipField) . "'
 			        data-map-city='" . esc_attr($this->euvatCityField) . "'
 			        data-map-country='" . esc_attr($this->euvatCountryField) . "'
-			        {$max_length} 
-			        {$aria_describedby} 
-			        {$tabindex} 
-			        {$placeholder_attribute} 
-			        {$required_attribute} 
-			        {$invalid_attribute} 
-			        {$disabled_text} 
+			        {$max_length}
+			        {$aria_describedby}
+			        {$tabindex}
+			        {$placeholder_attribute}
+			        {$required_attribute}
+			        {$invalid_attribute}
+			        {$disabled_text}
 			        {$autocomplete}
 			    />
 			    {$text_hint}
