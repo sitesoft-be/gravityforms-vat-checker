@@ -13,16 +13,34 @@ class Field_EU_VAT extends \GF_Field_Text
     public function get_form_editor_field_settings(): array
     {
         return [
-	        ...parent::get_form_editor_field_settings(),
+            ...parent::get_form_editor_field_settings(),
         ];
     }
 
-	public function get_value_submission($field_values, $get_from_post_global_var = true) {
-		$input_name = 'input_' . $this->id;
-		return rgpost($input_name);
-	}
+    public function validate($value, $form): void {
+        $url = "https://controleerbtwnummer.eu/api/validate/" . urlencode($value) . ".json";
+        $response = wp_remote_get($url);
 
-	public function get_form_editor_field_title(): string
+        if (is_wp_error($response)) {
+            $this->failed_validation  = true;
+            $this->validation_message = empty($this->errorMessage) ? esc_html__('The text entered exceeds the maximum number of characters.', 'gravityforms') : $this->errorMessage;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (empty($body['valid'])) {
+            $this->failed_validation  = true;
+            $this->validation_message = empty($this->errorMessage) ? esc_html__('The text entered exceeds the maximum number of characters.', 'gravityforms') : $this->errorMessage;
+        }
+    }
+
+    public function get_value_submission($field_values, $get_from_post_global_var = true)
+    {
+        $input_name = 'input_' . $this->id;
+        return rgpost($input_name);
+    }
+
+    public function get_form_editor_field_title(): string
     {
         return esc_attr__('EU VAT Field', 'sitesoft-eu-vat');
     }
@@ -39,10 +57,10 @@ class Field_EU_VAT extends \GF_Field_Text
 
     public function get_field_input($form, $value = '', $entry = null): string
     {
-	    $form_id         = absint( $form['id'] );
-	    $is_entry_detail = $this->is_entry_detail();
-	    $is_form_editor  = $this->is_form_editor();
-	    $id          = (int) $this->id;
+        $form_id         = absint($form['id']);
+        $is_entry_detail = $this->is_entry_detail();
+        $is_form_editor  = $this->is_form_editor();
+        $id          = (int) $this->id;
 
         $field_id    = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 
