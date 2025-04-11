@@ -4,8 +4,8 @@
  * Plugin Name:       Gravity Forms EU VAT Checker
  * Plugin URI:        https://sitesoft.be
  * Description:       Validates EU VAT in Gravity Forms field
- * Requires at least: 5.2
- * Requires PHP:      7.2
+ * Requires at least: 6.0
+ * Requires PHP:      8.0
  * Version:           2025.04.01
  * Author:            Sander Rebry
  * Author URI:        https://sitesoft.be
@@ -56,21 +56,17 @@ add_action('gform_field_standard_settings', function ($position, $form_id) {
     if ($position == 50) {
         ?>
         <li class="euvat_mappings_setting field_setting">
-            <label class="section_label"><?php esc_html_e('Mapping velden (optioneel)', 'sitesoft-eu-vat'); ?></label>
-
-            <label><?php esc_html_e('Naam veld (input_x)', 'sitesoft-eu-vat'); ?></label>
+            <label class="section_label"><?php esc_html_e('Mapping fields (optional)', 'sitesoft-eu-vat'); ?></label>
+            <p><?php _e('You must reference the GF field + ID. Ex: input_5', 'sitesoft-eu-vat'); ?></p>
+            <label><?php esc_html_e('Name', 'sitesoft-eu-vat'); ?></label>
             <input type="text" id="euvat_name_field" size="25">
-
-            <label><?php esc_html_e('Straat veld', 'sitesoft-eu-vat'); ?></label>
+            <label><?php esc_html_e('Street', 'sitesoft-eu-vat'); ?></label>
             <input type="text" id="euvat_street_field" size="25">
-
-            <label><?php esc_html_e('Postcode veld', 'sitesoft-eu-vat'); ?></label>
+            <label><?php esc_html_e('Zip code', 'sitesoft-eu-vat'); ?></label>
             <input type="text" id="euvat_zip_field" size="25">
-
-            <label><?php esc_html_e('Gemeente veld', 'sitesoft-eu-vat'); ?></label>
+            <label><?php esc_html_e('City', 'sitesoft-eu-vat'); ?></label>
             <input type="text" id="euvat_city_field" size="25">
-
-            <label><?php esc_html_e('Land veld', 'sitesoft-eu-vat'); ?></label>
+            <label><?php esc_html_e('Country', 'sitesoft-eu-vat'); ?></label>
             <input type="text" id="euvat_country_field" size="25">
         </li>
 		<?php
@@ -110,3 +106,9 @@ add_action('admin_footer', function () {
     </script>
 	<?php
 });
+
+function load_textdomain(): void
+{
+    get_plugin_data(__FILE__);
+}
+add_action('init', __NAMESPACE__ . '\\load_textdomain');

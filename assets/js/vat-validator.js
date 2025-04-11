@@ -61,7 +61,6 @@ jQuery(document).ready(function ($) {
             const street = address.street + " " + (address.number ?? "");
             form.find(`[name="${mappings.street}"]`).val(street);
           }
-          console.log(address);
           if (mappings.zip && address?.zip_code) {
             form.find(`[name="${mappings.zip}"]`).val(address.zip_code);
           }
@@ -89,21 +88,4 @@ jQuery(document).ready(function ($) {
       },
     );
   });
-
-  // $("form").on("submit", function (e) {
-  //   const vatFields = $(this).find("input.gf-vat-field");
-  //   let allValid = true;
-  //
-  //   vatFields.each(function () {
-  //     const valid = $(this).data("vat-valid");
-  //     if (valid === false || typeof valid === "undefined") {
-  //       allValid = false;
-  //       $(this).trigger("blur");
-  //     }
-  //   });
-  //
-  //   if (!allValid) {
-  //     e.preventDefault();
-  //   }
-  // });
 });

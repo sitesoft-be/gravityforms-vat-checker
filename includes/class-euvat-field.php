@@ -134,25 +134,6 @@ class Field_EU_VAT extends \GF_Field_Text
 			</div>";
 
     }
-
-    public function get_form_editor_field_input($form, $value = '', $entry = null)
-    {
-        return '
-	    <li class="euvat_mappings_setting field_setting">
-	        <label class="section_label">' . __('Mapping velden (optioneel)', 'sitesoft-eu-vat') . '</label>
-	        <label>' . __('Naam veld ID', 'sitesoft-eu-vat') . '</label>
-	        <input type="text" id="euvat_name_field" size="10">
-	        <label>' . __('Straat veld ID', 'sitesoft-eu-vat') . '</label>
-	        <input type="text" id="euvat_street_field" size="10">
-	        <label>' . __('Postcode veld ID', 'sitesoft-eu-vat') . '</label>
-	        <input type="text" id="euvat_zip_field" size="10">
-	        <label>' . __('Gemeente veld ID', 'sitesoft-eu-vat') . '</label>
-	        <input type="text" id="euvat_city_field" size="10">
-	        <label>' . __('Land veld ID', 'sitesoft-eu-vat') . '</label>
-	        <input type="text" id="euvat_country_field" size="10">
-	    </li>';
-    }
-
 }
 
 \GF_Fields::register(new Field_EU_VAT());
