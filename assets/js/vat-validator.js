@@ -8,7 +8,7 @@ jQuery(document).ready(function ($) {
     const $countryCode = $(container).find("select[name='country_code']").val();
 
     if ($countryCode === "BE" && input.val().length >= 10) {
-      handleVatChecker();
+      handleVatChecker.call(this);
     }
   });
 
@@ -33,8 +33,6 @@ jQuery(document).ready(function ($) {
         nonce: vatChecker.nonce,
       },
       function (response) {
-        console.log(response);
-
         if (response.success) {
           if (!response.hasOwnProperty("data")) {
             return;

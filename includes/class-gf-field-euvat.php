@@ -20,8 +20,9 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 
     public function validate($value, $form): void
     {
-        $vat_checker = new EU_VAT_API(urlencode($value));
-        $results     = $vat_checker->get_results();
+        $country_code = $this->countryCodeSubmitted ?? 'BE';
+        $vat_checker  = new EU_VAT_API(urlencode($value), $country_code);
+        $results      = $vat_checker->get_results();
 
         if (! $results) {
             $this->failed_validation  = true;
@@ -40,9 +41,11 @@ class GF_Field_EU_VAT extends \GF_Field_Text
         }
     }
 
-    public function get_value_submission($field_values, $get_from_post_global_var = true)
+    public function get_value_submission($field_values, $get_from_post_global_var = true): array|string
     {
         $input_name = 'input_' . $this->id;
+
+        $this->countryCodeSubmitted = rgpost('country_code') ?: 'BE';
 
         return rgpost($input_name);
     }
@@ -68,6 +71,10 @@ class GF_Field_EU_VAT extends \GF_Field_Text
         $is_entry_detail = $this->is_entry_detail();
         $is_form_editor  = $this->is_form_editor();
         $id              = (int) $this->id;
+        $country_codes   = [
+            'BE',
+            'DE',
+        ];
 
         $field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 
@@ -99,11 +106,16 @@ class GF_Field_EU_VAT extends \GF_Field_Text
             ], esc_html__('Separate tags with commas', 'gravityforms'), $form_id) . '</p>';
         }
 
-        return "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;display: flex; flex-wrap:wrap; gap: .5rem;'>
-				<select name='country_code' style='min-width:60px;flex-shrink:1;width:auto;'>
-					<option value='BE'>BE</option>
-					<option value='DE'>DE</option>
-				</select>
+        $selected_code = $this->countryCodeSubmitted ?? 'BE';
+
+        $html = "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;display: flex; flex-wrap:wrap; gap: .5rem;'>
+				<select name='country_code' style='min-width:60px;flex-shrink:1;width:auto;'>";
+
+        foreach ($country_codes as $country_code) {
+            $selected = selected($selected_code, $country_code, false);
+            $html     .= "<option value='{$country_code}'{$selected}>{$country_code}</option>";
+        }
+        $html .= "</select>
 			    <input
 			        name='input_{$id}'
 			        id='{$field_id}'
@@ -135,6 +147,8 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 					</div>
 				</div>
 			</div>";
+
+        return $html;
     }
 }
 

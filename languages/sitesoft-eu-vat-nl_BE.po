@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gravity Forms EU VAT Checker\n"
-"POT-Creation-Date: 2025-04-11 16:37+0200\n"
-"PO-Revision-Date: 2025-04-11 16:45+0200\n"
+"POT-Creation-Date: 2025-04-12 00:07+0200\n"
+"PO-Revision-Date: 2025-04-12 00:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_BE\n"
@@ -21,27 +21,19 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 "X-Poedit-SearchPathExcluded-1: plugin-update-checker/vendor\n"
 
-#: gravityforms-vat-checker.php:59
-msgid "Mapping fields (optional)"
-msgstr "Mapping velden"
-
-#: gravityforms-vat-checker.php:60
-msgid "You must reference the GF field + ID. Ex: input_5"
-msgstr "Je moet verwijzen naar het GF-veld + ID. Voorbeeld: input_5"
-
-#: gravityforms-vat-checker.php:61
+#: gravityforms-vat-checker.php:65
 msgid "Name"
 msgstr "Naam"
 
-#: gravityforms-vat-checker.php:63
+#: gravityforms-vat-checker.php:66
 msgid "Street"
 msgstr "Straat"
 
-#: gravityforms-vat-checker.php:65
+#: gravityforms-vat-checker.php:67
 msgid "Zip code"
 msgstr "Postcode"
 
-#: gravityforms-vat-checker.php:67
+#: gravityforms-vat-checker.php:68
 msgid "City"
 msgstr "Gemeente"
 
@@ -49,15 +41,43 @@ msgstr "Gemeente"
 msgid "Country"
 msgstr "Land"
 
-#: includes/class-euvat-field.php:29 includes/class-euvat-field.php:39
-msgid "The text entered exceeds the maximum number of characters."
-msgstr "De ingevoerde tekst overschrijdt het maximum aantal tekens."
+#: gravityforms-vat-checker.php:74
+msgid "Mapping fields (optional)"
+msgstr "Mapping velden"
 
-#: includes/class-euvat-field.php:54
+#: gravityforms-vat-checker.php:83
+msgid "Select a field"
+msgstr "Selecteer een veld"
+
+#: includes/class-ajax-handler.php:21
+msgid "VAT number is empty"
+msgstr "BTW-nummer is leeg"
+
+#: includes/class-ajax-handler.php:30
+msgid "An error has occurred, please try again"
+msgstr "Er is een fout opgetreden, probeer opnieuw"
+
+#: includes/class-ajax-handler.php:36
+msgid "Invalid VAT number"
+msgstr "Ongeldig BTW-nummer"
+
+#: includes/class-ajax-handler.php:43
+msgid "Valid VAT number"
+msgstr "Geldig BTW-nummer"
+
+#: includes/class-gf-field-euvat.php:30
+msgid "There is something wrong with the request."
+msgstr "Er is iets mis met het verzoek."
+
+#: includes/class-gf-field-euvat.php:38
+msgid "The EU VAT number is invalid."
+msgstr "Het EU-BTW-nummer is ongeldig."
+
+#: includes/class-gf-field-euvat.php:53
 msgid "EU VAT Field"
 msgstr ""
 
-#: includes/class-euvat-field.php:101
+#: includes/class-gf-field-euvat.php:100
 msgid "Separate tags with commas"
 msgstr "Tags scheiden met komma’s"
 
@@ -117,6 +137,12 @@ msgstr ""
 #. Author of the plugin/theme
 msgid "Sander Rebry"
 msgstr ""
+
+#~ msgid "You must reference the GF field + ID. Ex: input_5"
+#~ msgstr "Je moet verwijzen naar het GF-veld + ID. Voorbeeld: input_5"
+
+#~ msgid "The text entered exceeds the maximum number of characters."
+#~ msgstr "De ingevoerde tekst overschrijdt het maximum aantal tekens."
 
 #~ msgid "Name field"
 #~ msgstr "Naam veld (input)"

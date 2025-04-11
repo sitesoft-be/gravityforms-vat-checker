@@ -27,7 +27,7 @@ class AJAX_Handler
 
         if (! $results) {
             wp_send_json_error([
-                'message' => __('Error connecting to API', 'sitesoft-eu-vat'),
+                'message' => __('An error has occurred, please try again', 'sitesoft-eu-vat'),
             ]);
         }
 
