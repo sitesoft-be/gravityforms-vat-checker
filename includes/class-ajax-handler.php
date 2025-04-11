@@ -2,34 +2,49 @@
 
 namespace Sitesoft\GravityForms\VATChecker;
 
-class AJAX_Handler {
+class AJAX_Handler
+{
+    public function __construct()
+    {
+        add_action('wp_ajax_validate_vat_number', [ $this, 'handle_ajax' ]);
+        add_action('wp_ajax_nopriv_validate_vat_number', [ $this, 'handle_ajax' ]);
+    }
 
-	public function __construct() {
-		add_action('wp_ajax_validate_vat_number', [$this, 'handle_ajax']);
-		add_action('wp_ajax_nopriv_validate_vat_number', [$this, 'handle_ajax']);
-	}
+    public function handle_ajax(): void
+    {
+        check_ajax_referer('validate_vat_nonce', 'nonce');
 
-	public function handle_ajax(): void {
-		check_ajax_referer('validate_vat_nonce', 'nonce');
+        $vat         = sanitize_text_field($_POST['vat'] ?? '');
+        $countryCode = sanitize_text_field($_POST['country_code'] ?? 'BE');
+        if (empty($vat)) {
+            wp_send_json_error([
+                'message' => __('VAT number is empty', 'sitesoft-eu-vat'),
+            ]);
+        }
 
-		$vat = sanitize_text_field($_POST['vat'] ?? '');
-		if (empty($vat)) {
-			wp_send_json_error(['message' => 'BTW-nummer is leeg.']);
-		}
+        $vat_checker = new EU_VAT_API(urlencode($vat), $countryCode);
+        $results     = $vat_checker->get_results();
 
-		$url = "https://controleerbtwnummer.eu/api/validate/" . urlencode($vat) . ".json";
-		$response = wp_remote_get($url);
+        if (! $results) {
+            wp_send_json_error([
+                'message' => __('Error connecting to API', 'sitesoft-eu-vat'),
+            ]);
+        }
 
-		if (is_wp_error($response)) {
-			wp_send_json_error(['message' => 'Fout bij verbinden met API.']);
-		}
+        if (! $results->valid) {
+            wp_send_json_error([
+                'message' => __('Invalid VAT number', 'sitesoft-eu-vat'),
+            ]);
+        }
 
-		$body = json_decode(wp_remote_retrieve_body($response), true);
+        $parsed_address = $vat_checker->parse_address($results->address);
 
-		if (!empty($body['valid'])) {
-			wp_send_json_success(['message' => 'Geldig BTW-nummer.', ...$body]);
-		} else {
-			wp_send_json_error(['message' => 'Ongeldig BTW-nummer.']);
-		}
-	}
+        wp_send_json_success([
+            'message'     => __('Valid VAT number', 'sitesoft-eu-vat'),
+            'vatNumber'   => $results->vatNumber,
+            'countryCode' => $results->countryCode,
+            'name'        => $results->name,
+            'address'     => $parsed_address,
+        ]);
+    }
 }

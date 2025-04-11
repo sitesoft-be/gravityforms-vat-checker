@@ -6,7 +6,7 @@ if (! class_exists('GF_Fields')) {
     return;
 }
 
-class Field_EU_VAT extends \GF_Field_Text
+class GF_Field_EU_VAT extends \GF_Field_Text
 {
     public $type = 'euvat';
 
@@ -20,24 +20,22 @@ class Field_EU_VAT extends \GF_Field_Text
 
     public function validate($value, $form): void
     {
-        $url      = "https://controleerbtwnummer.eu/api/validate/" . urlencode($value) . ".json";
-        $response = wp_remote_get($url);
+        $vat_checker = new EU_VAT_API(urlencode($value));
+        $results     = $vat_checker->get_results();
 
-        if (is_wp_error($response)) {
+        if (! $results) {
             $this->failed_validation  = true;
             $this->validation_message = empty($this->errorMessage) ? esc_html__(
-                'The text entered exceeds the maximum number of characters.',
-                'gravityforms',
+                'There is something wrong with the request.',
+                'sitesoft-eu-vat',
             ) : $this->errorMessage;
         }
 
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-
-        if (empty($body['valid'])) {
+        if (! $results->valid) {
             $this->failed_validation  = true;
             $this->validation_message = empty($this->errorMessage) ? esc_html__(
-                'The text entered exceeds the maximum number of characters.',
-                'gravityforms',
+                'The EU VAT number is invalid.',
+                'sitesoft-eu-vat',
             ) : $this->errorMessage;
         }
     }
@@ -101,7 +99,11 @@ class Field_EU_VAT extends \GF_Field_Text
             ], esc_html__('Separate tags with commas', 'gravityforms'), $form_id) . '</p>';
         }
 
-        return "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;'>
+        return "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;display: flex; flex-wrap:wrap; gap: .5rem;'>
+				<select name='country_code' style='min-width:60px;flex-shrink:1;width:auto;'>
+					<option value='BE'>BE</option>
+					<option value='DE'>DE</option>
+				</select>
 			    <input
 			        name='input_{$id}'
 			        id='{$field_id}'
@@ -113,6 +115,7 @@ class Field_EU_VAT extends \GF_Field_Text
 			        data-map-zip='" . esc_attr($this->euvatZipField) . "'
 			        data-map-city='" . esc_attr($this->euvatCityField) . "'
 			        data-map-country='" . esc_attr($this->euvatCountryField) . "'
+			        style='flex:1;'
 			        {$max_length}
 			        {$aria_describedby}
 			        {$tabindex}
@@ -132,8 +135,7 @@ class Field_EU_VAT extends \GF_Field_Text
 					</div>
 				</div>
 			</div>";
-
     }
 }
 
-\GF_Fields::register(new Field_EU_VAT());
+\GF_Fields::register(new GF_Field_EU_VAT());

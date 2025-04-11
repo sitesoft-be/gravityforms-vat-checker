@@ -26,10 +26,11 @@ define('SITESOFT_GF_DIR', plugin_dir_path(__FILE__));
 require_once SITESOFT_GF_DIR . 'update-checker.php';
 
 add_action('gform_loaded', function () {
-    require_once SITESOFT_GF_DIR . 'includes/class-euvat-field.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-eu-vat-api.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-gf-field-euvat.php';
     require_once SITESOFT_GF_DIR . 'includes/class-ajax-handler.php';
 
-    new Field_EU_VAT();
+    new GF_Field_EU_VAT();
     new AJAX_Handler();
 }, 5);
 
@@ -53,56 +54,80 @@ add_action('gform_enqueue_scripts', function ($form, $is_ajax) {
 }, 10, 2);
 
 add_action('gform_field_standard_settings', function ($position, $form_id) {
-    if ($position == 50) {
-        ?>
-        <li class="euvat_mappings_setting field_setting">
-            <label class="section_label"><?php esc_html_e('Mapping fields (optional)', 'sitesoft-eu-vat'); ?></label>
-            <p><?php _e('You must reference the GF field + ID. Ex: input_5', 'sitesoft-eu-vat'); ?></p>
-            <label><?php esc_html_e('Name', 'sitesoft-eu-vat'); ?></label>
-            <input type="text" id="euvat_name_field" size="25">
-            <label><?php esc_html_e('Street', 'sitesoft-eu-vat'); ?></label>
-            <input type="text" id="euvat_street_field" size="25">
-            <label><?php esc_html_e('Zip code', 'sitesoft-eu-vat'); ?></label>
-            <input type="text" id="euvat_zip_field" size="25">
-            <label><?php esc_html_e('City', 'sitesoft-eu-vat'); ?></label>
-            <input type="text" id="euvat_city_field" size="25">
-            <label><?php esc_html_e('Country', 'sitesoft-eu-vat'); ?></label>
-            <input type="text" id="euvat_country_field" size="25">
-        </li>
-		<?php
-    }
-}, 10, 2);
 
-add_action('admin_footer', function () {
-    $screen = get_current_screen();
-    if ($screen && $screen->id !== 'toplevel_page_gf_edit_forms') {
+    if ($position !== 50) {
         return;
     }
+
+    $formOb = \GFAPI::get_form($form_id);
+
+    $mappingFields = [
+        'name'    => __('Name', 'sitesoft-eu-vat'),
+        'street'  => __('Street', 'sitesoft-eu-vat'),
+        'zip'     => __('Zip code', 'sitesoft-eu-vat'),
+        'city'    => __('City', 'sitesoft-eu-vat'),
+        'country' => __('Country', 'sitesoft-eu-vat'),
+    ];
+
+    $fields = \GFAPI::get_fields_by_type($formOb, [ 'text', 'address' ], true);
+    ?>
+    <label class="section_label"><?php esc_html_e('Mapping fields (optional)', 'sitesoft-eu-vat'); ?></label>
+	<?php foreach ($mappingFields as $mappingField => $label): ?>
+        <li class="euvat_mappings_setting field_setting">
+            <label class="field_placeholder"
+                   for="euvat_<?php echo $mappingField; ?>_field"
+            >
+				<?php echo $label; ?>
+            </label>
+            <select id="euvat_<?php echo $mappingField; ?>_field">
+                <option selected><?php _e('Select a field', 'sitesoft-eu-vat'); ?></option>
+				<?php foreach ($fields as $field):
+
+				    if ($field->inputType === 'address') :
+				        $address_types = $field->inputs;
+				        foreach ($address_types as $address_type) :
+				            ?>
+                            <option value="<?php echo esc_attr($address_type['id']); ?>"><?php echo esc_html($address_type['label']); ?></option>
+						<?php endforeach;
+				    else:
+				        ?>
+                        <option value="<?php echo esc_attr($field->id); ?>"><?php echo esc_html($field->label); ?></option>
+					<?php endif; endforeach; ?>
+            </select>
+        </li>
+	<?php endforeach; ?>
+	<?php
+}, 10, 2);
+
+add_action('gform_editor_js', function () {
     ?>
     <script type="text/javascript">
-        jQuery(document).on('gform_load_field_settings', function (event, field, form) {
-            jQuery('#euvat_name_field').val(field.euvatNameField || '');
-            jQuery('#euvat_street_field').val(field.euvatStreetField || '');
-            jQuery('#euvat_zip_field').val(field.euvatZipField || '');
-            jQuery('#euvat_city_field').val(field.euvatCityField || '');
-            jQuery('#euvat_country_field').val(field.euvatCountryField || '');
-        });
+        (function ($) {
+            $(document).on('gform_load_field_settings', function (event, field, form) {
+                $('#euvat_name_field').val(field.euvatNameField || '');
+                $('#euvat_street_field').val(field.euvatStreetField || '');
+                $('#euvat_zip_field').val(field.euvatZipField || '');
+                $('#euvat_city_field').val(field.euvatCityField || '');
+                $('#euvat_country_field').val(field.euvatCountryField || '');
+            });
 
-        jQuery('#euvat_name_field').on('change', function () {
-            SetFieldProperty('euvatNameField', jQuery(this).val());
-        });
-        jQuery('#euvat_street_field').on('change', function () {
-            SetFieldProperty('euvatStreetField', jQuery(this).val());
-        });
-        jQuery('#euvat_zip_field').on('change', function () {
-            SetFieldProperty('euvatZipField', jQuery(this).val());
-        });
-        jQuery('#euvat_city_field').on('change', function () {
-            SetFieldProperty('euvatCityField', jQuery(this).val());
-        });
-        jQuery('#euvat_country_field').on('change', function () {
-            SetFieldProperty('euvatCountryField', jQuery(this).val());
-        });
+            $('#euvat_name_field').on('change', function () {
+                SetFieldProperty('euvatNameField', $(this).val());
+            });
+            $('#euvat_street_field').on('change', function () {
+                SetFieldProperty('euvatStreetField', $(this).val());
+            });
+            $('#euvat_zip_field').on('change', function () {
+                SetFieldProperty('euvatZipField', $(this).val());
+            });
+            $('#euvat_city_field').on('change', function () {
+                SetFieldProperty('euvatCityField', $(this).val());
+            });
+            $('#euvat_country_field').on('change', function () {
+                SetFieldProperty('euvatCountryField', $(this).val());
+            });
+        }(jQuery))
+
     </script>
 	<?php
 });
