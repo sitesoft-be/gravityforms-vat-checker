@@ -2,7 +2,7 @@
 
 namespace Sitesoft\GravityForms\VATChecker;
 
-if (!class_exists('GF_Fields')) {
+if (! class_exists('GF_Fields')) {
     return;
 }
 
@@ -14,29 +14,38 @@ class Field_EU_VAT extends \GF_Field_Text
     {
         return [
             ...parent::get_form_editor_field_settings(),
+            'euvat_mappings_setting',
         ];
     }
 
-    public function validate($value, $form): void {
-        $url = "https://controleerbtwnummer.eu/api/validate/" . urlencode($value) . ".json";
+    public function validate($value, $form): void
+    {
+        $url      = "https://controleerbtwnummer.eu/api/validate/" . urlencode($value) . ".json";
         $response = wp_remote_get($url);
 
         if (is_wp_error($response)) {
             $this->failed_validation  = true;
-            $this->validation_message = empty($this->errorMessage) ? esc_html__('The text entered exceeds the maximum number of characters.', 'gravityforms') : $this->errorMessage;
+            $this->validation_message = empty($this->errorMessage) ? esc_html__(
+                'The text entered exceeds the maximum number of characters.',
+                'gravityforms',
+            ) : $this->errorMessage;
         }
 
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if (empty($body['valid'])) {
             $this->failed_validation  = true;
-            $this->validation_message = empty($this->errorMessage) ? esc_html__('The text entered exceeds the maximum number of characters.', 'gravityforms') : $this->errorMessage;
+            $this->validation_message = empty($this->errorMessage) ? esc_html__(
+                'The text entered exceeds the maximum number of characters.',
+                'gravityforms',
+            ) : $this->errorMessage;
         }
     }
 
     public function get_value_submission($field_values, $get_from_post_global_var = true)
     {
         $input_name = 'input_' . $this->id;
+
         return rgpost($input_name);
     }
 
@@ -60,14 +69,14 @@ class Field_EU_VAT extends \GF_Field_Text
         $form_id         = absint($form['id']);
         $is_entry_detail = $this->is_entry_detail();
         $is_form_editor  = $this->is_form_editor();
-        $id          = (int) $this->id;
+        $id              = (int) $this->id;
 
-        $field_id    = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+        $field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 
         $value        = esc_attr($value);
         $size         = $this->size;
         $class_suffix = $is_entry_detail ? '_admin' : '';
-        $class = [
+        $class        = [
             "sitesoft-euvat-field",
             $size . $class_suffix,
         ];
