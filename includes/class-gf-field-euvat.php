@@ -138,7 +138,7 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 			        {$autocomplete}
 			    />
 			    {$text_hint}
-			     <div class='icon-wrapper' style='width: 15px;height: 15px; position: absolute; top: 50%; transform: translateY(-50%); right: 1rem; display:none'>
+			     <div class='icon-wrapper' style='width: 15px;height: 15px; position: absolute; top: 50%; transform: translateY(-50%); right: 1rem; line-height:1; display:none'>
 				    <div class='checkmark' style='display:none; color:green;'>
 				    <svg xmlns='http://www.w3.org/2000/svg' fill='#008000' viewBox='0 0 448 512'><path d='M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z'/></svg>
 					</div>
