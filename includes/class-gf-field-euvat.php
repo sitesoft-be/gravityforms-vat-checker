@@ -108,7 +108,7 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 
         $selected_code = $this->countryCodeSubmitted ?? 'BE';
 
-        $html = "<div class='ginput_container ginput_container_textginput_container_email ginput_single_euvat' style='position: relative;display: flex; flex-wrap:wrap; gap: .5rem;'>
+        $html = "<div class='ginput_container ginput_single_euvat' style='position: relative;display: flex; flex-wrap:wrap; gap: .5rem;'>
 				<select name='country_code' style='min-width:60px;flex-shrink:1;width:auto;'>";
 
         foreach ($country_codes as $country_code) {
