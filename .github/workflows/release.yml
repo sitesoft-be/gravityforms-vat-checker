@@ -1,0 +1,51 @@
+name: Create Release with Dependencies
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Create ZIP file
+        run: |
+          mkdir dist
+          zip -r gravity-forms-eu-vat.zip . \
+          -x "*.git*" \
+          -x "*.github*" \
+          -x ".gitignore" \
+          -x "composer.json" \
+          -x "composer.lock" \
+          -x "package.json" \
+          -x "package-lock.json"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./gravity-forms-eu-vat.zip
+          asset_name: gravity-forms-eu-vat.zip
+          asset_content_type: application/zip
