@@ -67,22 +67,6 @@ Translation files can be added in the `/languages` folder as `.po/.mo` files.
 
 ---
 
-## Developer Info
-
-- Namespace: `Sitesoft\GravityForms\VATChecker`
-- Built with an object-oriented architecture
-- Follows best practices like class encapsulation, modular design, and service separation (e.g. API, AJAX handlers)
-
----
-
-## Possible Future Features
-
-- Support for additional EU countries
-- Auto-populate form fields with company data after VAT validation
-- Integration with the official VIES API or other validation services
-
----
-
 ## License
 
 GPL v2 or later  
