@@ -10,7 +10,7 @@
 
 ## Overview
 
-**Gravity Forms EU VAT Checker** is a WordPress plugin that adds a custom field type to Gravity Forms for validating
+**Gravity Forms EU VAT Checker** is a WordPress plugin that adds a field to Gravity Forms for validating
 European VAT numbers using an external API. The plugin supports country selection and optional field mapping for name,
 address, zip code, city, and country.
 
@@ -19,7 +19,7 @@ address, zip code, city, and country.
 ## Features
 
 - New field type in Gravity Forms: **EU VAT**
-- Real-time validation of EU VAT numbers via an external API
+- Real-time validation of EU VAT numbers via an external API (Free)
 - Country selection dropdown included in the field
 - Optional field mapping for name, street, zip code, city, and country
 - Inline visual feedback (checkmark or error icon)
