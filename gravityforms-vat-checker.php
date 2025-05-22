@@ -6,7 +6,7 @@
  * Description:       Validates EU VAT in Gravity Forms field
  * Requires at least: 6.0
  * Requires PHP:      8.0
- * Version:           2025.04.12
+ * Version:           2025.05.22
  * Author:            Sander Rebry
  * Author URI:        https://sitesoft.be
  * License:           GPL v2 or later

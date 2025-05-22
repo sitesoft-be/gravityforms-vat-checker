@@ -16,36 +16,30 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
       - name: Create ZIP file
         run: |
           mkdir dist
-          zip -r gravity-forms-eu-vat.zip . \
-          -x "*.git*" \
-          -x "*.github*" \
-          -x ".gitignore" \
-          -x "composer.json" \
-          -x "composer.lock" \
-          -x "package.json" \
-          -x "package-lock.json"
+          zip -r dist/gravity-forms-eu-vat.zip . \
+            -x "*.git*" \
+            -x "*.github*" \
+            -x ".gitignore" \
+            -x "composer.json" \
+            -x "composer.lock"
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Create GitHub Release and Upload Asset
+        uses: softprops/action-gh-release@v1
         with:
+          name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
+          files: dist/woo-cps.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./gravity-forms-eu-vat.zip
-          asset_name: gravity-forms-eu-vat.zip
-          asset_content_type: application/zip
