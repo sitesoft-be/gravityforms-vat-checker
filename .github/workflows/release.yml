@@ -1,15 +1,15 @@
-name: Create Release with Dependencies
+name: Create Tag and Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  tag-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,21 +25,47 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
+      - name: Generate tag name
+        id: tagname
+        run: |
+          TAG="v$(date +'%Y.%m.%d-%H%M')"
+          echo "Generated tag: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create and push tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag $TAG
+          git push origin $TAG
+
       - name: Create ZIP file
         run: |
           mkdir dist
-          zip -r dist/gravity-forms-eu-vat.zip . \
+          zip -r dist/woo-cps.zip . \
             -x "*.git*" \
             -x "*.github*" \
-            -x ".gitignore" \
+            -x "dist*" \
             -x "composer.json" \
             -x "composer.lock"
 
-      - name: Create GitHub Release and Upload Asset
-        uses: softprops/action-gh-release@v1
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
         with:
-          name: Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name }}
-          files: dist/gravity-forms-eu-vat.zip
+          tag_name: ${{ env.TAG }}
+          release_name: Release ${{ env.TAG }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/woo-cps.zip
+          asset_name: woo-cps.zip
+          asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
