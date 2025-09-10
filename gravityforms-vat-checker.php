@@ -6,7 +6,7 @@
  * Description:       Validates EU VAT in Gravity Forms field
  * Requires at least: 6.0
  * Requires PHP:      8.0
- * Version:           2025.05.22
+ * Version:           2025.09.10
  * Author:            Sander Rebry
  * Author URI:        https://sitesoft.be
  * License:           GPL v2 or later
@@ -18,88 +18,88 @@
 
 namespace Sitesoft\GravityForms\VATChecker;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-define('SITESOFT_GF_URL', plugin_dir_url(__FILE__));
-define('SITESOFT_GF_DIR', plugin_dir_path(__FILE__));
+define( 'SITESOFT_GF_URL', plugin_dir_url( __FILE__ ) );
+define( 'SITESOFT_GF_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once SITESOFT_GF_DIR . 'update-checker.php';
 
-add_action('gform_loaded', function () {
+add_action( 'gform_loaded', function () {
     require_once SITESOFT_GF_DIR . 'includes/class-eu-vat-api.php';
     require_once SITESOFT_GF_DIR . 'includes/class-gf-field-euvat.php';
     require_once SITESOFT_GF_DIR . 'includes/class-ajax-handler.php';
 
     new GF_Field_EU_VAT();
     new AJAX_Handler();
-}, 5);
+}, 5 );
 
-add_action('gform_enqueue_scripts', function ($form, $is_ajax) {
-    foreach ($form['fields'] as $field) {
-        if (isset($field->type) && $field->type === 'euvat') {
+add_action( 'gform_enqueue_scripts', function ( $form, $is_ajax ) {
+    foreach ( $form['fields'] as $field ) {
+        if ( isset( $field->type ) && $field->type === 'euvat' ) {
             wp_enqueue_script(
-                'eu-vat-validator',
-                SITESOFT_GF_URL . 'assets/js/vat-validator.js',
-                [ 'jquery' ],
-                null,
-                true,
+                    'eu-vat-validator',
+                    SITESOFT_GF_URL . 'assets/js/vat-validator.js',
+                    [ 'jquery' ],
+                    null,
+                    true,
             );
-            wp_localize_script('eu-vat-validator', 'vatChecker', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce'    => wp_create_nonce('validate_vat_nonce'),
-            ]);
+            wp_localize_script( 'eu-vat-validator', 'vatChecker', [
+                    'ajax_url' => admin_url( 'admin-ajax.php' ),
+                    'nonce'    => wp_create_nonce( 'validate_vat_nonce' ),
+            ] );
             break;
         }
     }
-}, 10, 2);
+}, 10, 2 );
 
-add_action('gform_field_standard_settings', function ($position, $form_id) {
+add_action( 'gform_field_standard_settings', function ( $position, $form_id ) {
 
-    if ($position !== 50) {
+    if ( $position !== 50 ) {
         return;
     }
 
-    $formOb = \GFAPI::get_form($form_id);
+    $formOb = \GFAPI::get_form( $form_id );
 
     $mappingFields = [
-        'name'    => __('Name', 'sitesoft-eu-vat'),
-        'street'  => __('Street', 'sitesoft-eu-vat'),
-        'zip'     => __('Zip code', 'sitesoft-eu-vat'),
-        'city'    => __('City', 'sitesoft-eu-vat'),
-        'country' => __('Country', 'sitesoft-eu-vat'),
+            'name'    => __( 'Name', 'sitesoft-eu-vat' ),
+            'street'  => __( 'Street', 'sitesoft-eu-vat' ),
+            'zip'     => __( 'Zip code', 'sitesoft-eu-vat' ),
+            'city'    => __( 'City', 'sitesoft-eu-vat' ),
+            'country' => __( 'Country', 'sitesoft-eu-vat' ),
     ];
 
-    $fields = \GFAPI::get_fields_by_type($formOb, [ 'text', 'address' ], true);
+    $fields = \GFAPI::get_fields_by_type( $formOb, [ 'text', 'address' ], true );
     ?>
-    <label class="section_label"><?php esc_html_e('Mapping fields (optional)', 'sitesoft-eu-vat'); ?></label>
-	<?php foreach ($mappingFields as $mappingField => $label): ?>
+    <label class="section_label"><?php esc_html_e( 'Mapping fields (optional)', 'sitesoft-eu-vat' ); ?></label>
+    <?php foreach ( $mappingFields as $mappingField => $label ): ?>
         <li class="euvat_mappings_setting field_setting">
             <label class="field_placeholder"
                    for="euvat_<?php echo $mappingField; ?>_field"
             >
-				<?php echo $label; ?>
+                <?php echo $label; ?>
             </label>
             <select id="euvat_<?php echo $mappingField; ?>_field">
-                <option selected><?php _e('Select a field', 'sitesoft-eu-vat'); ?></option>
-				<?php foreach ($fields as $field):
+                <option selected><?php _e( 'Select a field', 'sitesoft-eu-vat' ); ?></option>
+                <?php foreach ( $fields as $field ):
 
-				    if ($field->inputType === 'address') :
-				        $address_types = $field->inputs;
-				        foreach ($address_types as $address_type) :
-				            ?>
-                            <option value="<?php echo esc_attr($address_type['id']); ?>"><?php echo esc_html($address_type['label']); ?></option>
-						<?php endforeach;
-				    else:
-				        ?>
-                        <option value="<?php echo esc_attr($field->id); ?>"><?php echo esc_html($field->label); ?></option>
-					<?php endif; endforeach; ?>
+                    if ( $field->inputType === 'address' ) :
+                        $address_types = $field->inputs;
+                        foreach ( $address_types as $address_type ) :
+                            ?>
+                            <option value="<?php echo esc_attr( $address_type['id'] ); ?>"><?php echo esc_html( $address_type['label'] ); ?></option>
+                        <?php endforeach;
+                    else:
+                        ?>
+                        <option value="<?php echo esc_attr( $field->id ); ?>"><?php echo esc_html( $field->label ); ?></option>
+                    <?php endif; endforeach; ?>
             </select>
         </li>
-	<?php endforeach; ?>
-	<?php
-}, 10, 2);
+    <?php endforeach; ?>
+    <?php
+}, 10, 2 );
 
-add_action('gform_editor_js', function () {
+add_action( 'gform_editor_js', function () {
     ?>
     <script type="text/javascript">
         (function ($) {
@@ -129,11 +129,10 @@ add_action('gform_editor_js', function () {
         }(jQuery))
 
     </script>
-	<?php
-});
+    <?php
+} );
 
-function load_textdomain(): void
-{
-    get_plugin_data(__FILE__);
+function load_textdomain(): void {
+    get_plugin_data( __FILE__ );
 }
-add_action('init', __NAMESPACE__ . '\\load_textdomain');
+add_action( 'init', __NAMESPACE__ . '\\load_textdomain' );
