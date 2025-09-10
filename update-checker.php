@@ -1,10 +1,8 @@
 <?php
 
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+require_once SITESOFT_GF_DIR . 'plugin-update-checker/plugin-update-checker.php';
 
-require 'plugin-update-checker/plugin-update-checker.php';
-
-$myUpdateChecker = PucFactory::buildUpdateChecker(
+$myUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
 	'https://github.com/sitesoft-be/gravityforms-vat-checker',
 	__FILE__,
 	'sitesoft-gravityforms-vat-checker',
