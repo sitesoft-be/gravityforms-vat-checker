@@ -6,7 +6,7 @@
  * Description:       Validates EU VAT in Gravity Forms field
  * Requires at least: 6.0
  * Requires PHP:      8.0
- * Version:           2025.09.11
+ * Version:           2025.10.23
  * Author:            Sander Rebry
  * Author URI:        https://sitesoft.be
  * License:           GPL v2 or later
@@ -39,7 +39,7 @@ add_action( 'gform_enqueue_scripts', function ( $form, $is_ajax ) {
         if ( isset( $field->type ) && $field->type === 'euvat' ) {
             wp_enqueue_script(
                     'eu-vat-validator',
-                    SITESOFT_GF_URL . 'assets/js/vat-validator.js',
+                    SITESOFT_GF_URL . 'assets/js/vat-validator.js?v=1',
                     [ 'jquery' ],
                     null,
                     true,
