@@ -103,7 +103,7 @@ class GF_Field_EU_VAT extends \GF_Field_Text
                 'gform_post_tags_hint',
                 $form_id,
                 $this->id,
-            ], esc_html__('Separate tags with commas', 'gravityforms'), $form_id) . '</p>';
+            ], esc_html__('Separate tags with commas', 'sitesoft-eu-vat'), $form_id) . '</p>';
         }
 
         $selected_code = $this->countryCodeSubmitted ?? 'BE';
