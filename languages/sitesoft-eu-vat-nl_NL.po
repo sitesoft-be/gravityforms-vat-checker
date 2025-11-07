@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gravity Forms EU VAT Checker\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-24 00:00+0000\n"
+"PO-Revision-Date: 2024-10-24 00:00+0000\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Domain: sitesoft-eu-vat\n"
+
+msgid "Name"
+msgstr "Naam"
+
+msgid "Street"
+msgstr "Straat"
+
+msgid "Zip code"
+msgstr "Postcode"
+
+msgid "City"
+msgstr "Stad"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Mapping fields (optional)"
+msgstr "Mappingvelden (optioneel)"
+
+msgid "Select a field"
+msgstr "Selecteer een veld"
+
+msgid "VAT number is empty"
+msgstr "Btw-nummer is leeg"
+
+msgid "An error has occurred, please try again"
+msgstr "Er is een fout opgetreden, probeer het opnieuw"
+
+msgid "Invalid VAT number"
+msgstr "Ongeldig btw-nummer"
+
+msgid "Valid VAT number"
+msgstr "Geldig btw-nummer"
+
+msgid "There is something wrong with the request."
+msgstr "Er is iets mis met het verzoek."
+
+msgid "The EU VAT number is invalid."
+msgstr "Het EU-btw-nummer is ongeldig."
+
+msgid "EU VAT Field"
+msgstr "EU-btw-veld"
+
+msgid "Separate tags with commas"
+msgstr "Scheid tags met komma's"
