@@ -6,7 +6,7 @@
  * Description:       Validates EU VAT in Gravity Forms field
  * Requires at least: 6.0
  * Requires PHP:      8.0
- * Version:           2025.11.07
+ * Version:           2026.10.09
  * Author:            Sander Rebry
  * Author URI:        https://sitesoft.be
  * License:           GPL v2 or later
@@ -26,6 +26,12 @@ define( 'SITESOFT_GF_DIR', plugin_dir_path( __FILE__ ) );
 require_once SITESOFT_GF_DIR . 'update-checker.php';
 
 add_action( 'gform_loaded', function () {
+    require_once SITESOFT_GF_DIR . 'includes/class-vat-result.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-vat-number.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-vat-cache.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-vat-logger.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-vies-client.php';
+    require_once SITESOFT_GF_DIR . 'includes/class-vat-validation-service.php';
     require_once SITESOFT_GF_DIR . 'includes/class-eu-vat-api.php';
     require_once SITESOFT_GF_DIR . 'includes/class-gf-field-euvat.php';
     require_once SITESOFT_GF_DIR . 'includes/class-ajax-handler.php';
@@ -39,14 +45,17 @@ add_action( 'gform_enqueue_scripts', function ( $form, $is_ajax ) {
         if ( isset( $field->type ) && $field->type === 'euvat' ) {
             wp_enqueue_script(
                     'eu-vat-validator',
-                    SITESOFT_GF_URL . 'assets/js/vat-validator.js?v=1',
+                    SITESOFT_GF_URL . 'assets/js/vat-validator.js',
                     [ 'jquery' ],
-                    null,
+                    (string) filemtime( SITESOFT_GF_DIR . 'assets/js/vat-validator.js' ),
                     true,
             );
             wp_localize_script( 'eu-vat-validator', 'vatChecker', [
                     'ajax_url' => admin_url( 'admin-ajax.php' ),
                     'nonce'    => wp_create_nonce( 'validate_vat_nonce' ),
+                    'messages' => [
+                            'temporary_error' => AJAX_Handler::temporary_error_message(),
+                    ],
             ] );
             break;
         }

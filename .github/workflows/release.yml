@@ -47,7 +47,12 @@ jobs:
             -x "*.github*" \
             -x "dist*" \
             -x "composer.json" \
-            -x "composer.lock"
+            -x "composer.lock" \
+            -x "tests/*" \
+            -x "node_modules/*" \
+            -x "package.json" \
+            -x "package-lock.json" \
+            -x "phpunit.xml.dist"
 
       - name: Create GitHub Release
         id: create_release
