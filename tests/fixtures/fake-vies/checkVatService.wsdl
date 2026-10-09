@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Test fixture only: a minimal checkVat WSDL modelled after the official VIES
+  service, so the real PHP SoapClient can be exercised against router.php.
+  The plugin itself always uses the official WSDL from ec.europa.eu.
+-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:impl="urn:ec.europa.eu:taxud:vies:services:checkVat"
+                  xmlns:tns1="urn:ec.europa.eu:taxud:vies:services:checkVat:types"
+                  targetNamespace="urn:ec.europa.eu:taxud:vies:services:checkVat">
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:ec.europa.eu:taxud:vies:services:checkVat:types"
+                    attributeFormDefault="qualified" elementFormDefault="qualified">
+            <xsd:element name="checkVat">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="countryCode" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="vatNumber" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="checkVatResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="countryCode" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="vatNumber" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="requestDate" type="xsd:date" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="valid" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="name" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+                        <xsd:element name="address" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="checkVatRequest">
+        <wsdl:part name="parameters" element="tns1:checkVat"/>
+    </wsdl:message>
+    <wsdl:message name="checkVatResponse">
+        <wsdl:part name="parameters" element="tns1:checkVatResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="checkVatPortType">
+        <wsdl:operation name="checkVat">
+            <wsdl:input name="checkVat" message="impl:checkVatRequest"/>
+            <wsdl:output name="checkVatResponse" message="impl:checkVatResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="checkVatBinding" type="impl:checkVatPortType">
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="checkVat">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="checkVat"><wsdlsoap:body use="literal"/></wsdl:input>
+            <wsdl:output name="checkVatResponse"><wsdlsoap:body use="literal"/></wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="checkVatService">
+        <wsdl:port name="checkVatPort" binding="impl:checkVatBinding">
+            <wsdlsoap:address location="http://127.0.0.1:9/overridden-by-location-option"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

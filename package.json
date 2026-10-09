@@ -1,0 +1,12 @@
+{
+  "name": "gravityforms-vat-checker",
+  "private": true,
+  "description": "Dev tooling for the Gravity Forms EU VAT Checker plugin (tests only, not shipped).",
+  "scripts": {
+    "test": "node --test tests/js/*.test.js"
+  },
+  "devDependencies": {
+    "jquery": "3.7.1",
+    "jsdom": "24.1.3"
+  }
+}

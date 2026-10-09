@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Forms EU VAT Checker 2025.11.07\n"
+"Project-Id-Version: Gravity Forms EU VAT Checker 2026.10.09\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/gravityforms-vat-checker\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-15T12:12:19+00:00\n"
+"POT-Creation-Date: 2026-10-09T12:00:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: sitesoft-eu-vat\n"
@@ -31,62 +31,58 @@ msgstr ""
 msgid "Sander Rebry"
 msgstr ""
 
-#: gravityforms-vat-checker.php:65
+#: gravityforms-vat-checker.php:74
 msgid "Name"
 msgstr ""
 
-#: gravityforms-vat-checker.php:66
+#: gravityforms-vat-checker.php:75
 msgid "Street"
 msgstr ""
 
-#: gravityforms-vat-checker.php:67
+#: gravityforms-vat-checker.php:76
 msgid "Zip code"
 msgstr ""
 
-#: gravityforms-vat-checker.php:68
+#: gravityforms-vat-checker.php:77
 msgid "City"
 msgstr ""
 
-#: gravityforms-vat-checker.php:69
+#: gravityforms-vat-checker.php:78
 msgid "Country"
 msgstr ""
 
-#: gravityforms-vat-checker.php:74
+#: gravityforms-vat-checker.php:83
 msgid "Mapping fields (optional)"
 msgstr ""
 
-#: gravityforms-vat-checker.php:83
+#: gravityforms-vat-checker.php:92
 msgid "Select a field"
 msgstr ""
 
-#: includes/class-ajax-handler.php:21
-msgid "VAT number is empty"
-msgstr ""
-
-#: includes/class-ajax-handler.php:30
-msgid "An error has occurred, please try again"
-msgstr ""
-
-#: includes/class-ajax-handler.php:36
-msgid "Invalid VAT number"
+#: includes/class-ajax-handler.php:16
+msgid "VAT number verification is temporarily unavailable. Please try again in a few moments."
 msgstr ""
 
 #: includes/class-ajax-handler.php:43
+msgid "VAT number is empty"
+msgstr ""
+
+#: includes/class-ajax-handler.php:59
+msgid "Invalid VAT number"
+msgstr ""
+
+#: includes/class-ajax-handler.php:68
 msgid "Valid VAT number"
 msgstr ""
 
-#: includes/class-gf-field-euvat.php:29
-msgid "There is something wrong with the request."
-msgstr ""
-
-#: includes/class-gf-field-euvat.php:37
+#: includes/class-gf-field-euvat.php:62
 msgid "The EU VAT number is invalid."
 msgstr ""
 
-#: includes/class-gf-field-euvat.php:55
+#: includes/class-gf-field-euvat.php:84
 msgid "EU VAT Field"
 msgstr ""
 
-#: includes/class-gf-field-euvat.php:106
+#: includes/class-gf-field-euvat.php:136
 msgid "Separate tags with commas"
 msgstr ""

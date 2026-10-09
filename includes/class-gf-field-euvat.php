@@ -10,6 +10,15 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 {
     public $type = 'euvat';
 
+    /**
+     * Tokens of successful validations in this request, keyed by "formId_fieldId",
+     * rendered back into the form when it is shown again (e.g. another field failed).
+     * Static on purpose: field objects get serialised into form meta.
+     *
+     * @var array<string, string>
+     */
+    private static array $valid_tokens = [];
+
     public function get_form_editor_field_settings(): array
     {
         return [
@@ -20,25 +29,45 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 
     public function validate($value, $form): void
     {
-        $country_code = $this->countryCodeSubmitted ?? 'BE';
-        $vat_checker  = new EU_VAT_API(urlencode($value), $country_code);
-        $results      = $vat_checker->get_results();
+        $value = is_string($value) ? trim($value) : '';
 
-        if (! $results) {
-            $this->failed_validation  = true;
-            $this->validation_message = empty($this->errorMessage) ? esc_html__(
-                'There is something wrong with the request.',
-                'sitesoft-eu-vat',
-            ) : $this->errorMessage;
+        // Empty + required is handled by Gravity Forms itself; empty + optional is fine.
+        if ($value === '') {
+            return;
         }
 
-        if (! $results->valid) {
-            $this->failed_validation  = true;
+        $country_code = $this->countryCodeSubmitted ?? rgpost('country_code');
+        $token        = rgpost('euvat_token_' . $this->id);
+        $service      = VAT_Validation_Service::instance();
+
+        // Same service + cache as the AJAX check. The token proves an earlier VALID
+        // AJAX answer, so a VIES hiccup between AJAX check and submit cannot block registration.
+        $result = $service->validate(
+            is_string($country_code) && $country_code !== '' ? $country_code : 'BE',
+            $value,
+            VAT_Validation_Service::CONTEXT_SUBMISSION,
+            is_string($token) ? $token : '',
+        );
+
+        if ($result->is_valid()) {
+            self::$valid_tokens[ absint($form['id'] ?? 0) . '_' . $this->id ] = $service->create_token($result);
+
+            return;
+        }
+
+        $this->failed_validation = true;
+
+        if ($result->is_invalid()) {
             $this->validation_message = empty($this->errorMessage) ? esc_html__(
                 'The EU VAT number is invalid.',
                 'sitesoft-eu-vat',
             ) : $this->errorMessage;
+
+            return;
         }
+
+        // Temporary VIES/technical problem: never show the "invalid" (custom) message.
+        $this->validation_message = esc_html(AJAX_Handler::temporary_error_message());
     }
 
     public function get_value_submission($field_values, $get_from_post_global_var = true): array|string
@@ -71,10 +100,11 @@ class GF_Field_EU_VAT extends \GF_Field_Text
         $is_entry_detail = $this->is_entry_detail();
         $is_form_editor  = $this->is_form_editor();
         $id              = (int) $this->id;
-        $country_codes   = [
+        $country_codes   = (array) apply_filters('sitesoft_euvat_country_codes', [
             'BE',
             'DE',
-        ];
+        ], $form_id, $this);
+        $token           = self::$valid_tokens[ $form_id . '_' . $id ] ?? '';
 
         $field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 
@@ -112,8 +142,9 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 				<select name='country_code' style='min-width:60px;flex-shrink:1;width:auto;'>";
 
         foreach ($country_codes as $country_code) {
-            $selected = selected($selected_code, $country_code, false);
-            $html     .= "<option value='{$country_code}'{$selected}>{$country_code}</option>";
+            $country_code = esc_attr($country_code);
+            $selected     = selected($selected_code, $country_code, false);
+            $html         .= "<option value='{$country_code}'{$selected}>{$country_code}</option>";
         }
         $html .= "</select>
 			    <input
@@ -137,6 +168,7 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 			        {$disabled_text}
 			        {$autocomplete}
 			    />
+			    <input type='hidden' class='sitesoft-euvat-token' name='euvat_token_{$id}' value='" . esc_attr($token) . "' />
 			    {$text_hint}
 			     <div class='icon-wrapper' style='width: 15px;height: 15px; position: absolute; top: 50%; transform: translateY(-50%); right: 1rem; line-height:1; display:none'>
 				    <div class='checkmark' style='display:none; color:green;'>
@@ -144,6 +176,9 @@ class GF_Field_EU_VAT extends \GF_Field_Text
 					</div>
 					<div class='invalid' style='display: none; color: #ff0000;'>
 					<svg xmlns='http://www.w3.org/2000/svg' fill='#ff0000' viewBox='0 0 384 512'><path d='M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z'/></svg>
+					</div>
+					<div class='temporary' style='display: none; color: #b45309;'>
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='#d97706'/><rect x='228' y='112' width='56' height='200' rx='28' fill='#fff'/><circle cx='256' cy='384' r='34' fill='#fff'/></svg>
 					</div>
 				</div>
 			</div>";

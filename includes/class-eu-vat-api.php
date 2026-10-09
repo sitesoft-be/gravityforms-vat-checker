@@ -2,8 +2,12 @@
 
 namespace Sitesoft\GravityForms\VATChecker;
 
-use SoapFault;
-
+/**
+ * Address helper for VIES data.
+ *
+ * The SOAP call itself lives in VIES_Client and is orchestrated by
+ * VAT_Validation_Service. get_results() is kept for backwards compatibility only.
+ */
 class EU_VAT_API
 {
     public function __construct(
@@ -11,47 +15,27 @@ class EU_VAT_API
         protected string $countryCode = 'BE',
     ) {}
 
+    /**
+     * @deprecated Use VAT_Validation_Service::instance()->validate(), which
+     *             distinguishes invalid numbers from temporary VIES problems.
+     *
+     * @return object|false VIES-like object, or false on a temporary/technical error
+     */
     public function get_results()
     {
-        try {
+        $result = VAT_Validation_Service::instance()->validate($this->countryCode, $this->vatNumber);
 
-            $stream_context = [];
-
-            if (wp_get_environment_type() === "development") {
-                $stream_context = [
-                    'stream_context' => stream_context_create([
-                        'ssl' => [
-                            'allow_self_signed' => true,
-                            'verify_peer'       => false,
-                            'verify_peer_name'  => false,
-                        ],
-                    ]),
-                ];
-            }
-
-            $client = new \SoapClient(
-                "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl",
-                $stream_context,
-            );
-
-            $params = [
-                'countryCode' => $this->countryCode,
-                'vatNumber'   => $this->vatNumber,
-            ];
-
-            return $client->checkVat($params);
-
-            // $result->countryCode;
-            // $result->vatNumber;
-            // $result->valid;
-            // $result->name;
-            // $result->address;
-
-        } catch (SoapFault $e) {
-            error_log($e);
+        if ($result->is_temporary_error()) {
+            return false;
         }
 
-        return false;
+        return (object) [
+            'countryCode' => $result->country_code(),
+            'vatNumber'   => $result->vat_number(),
+            'valid'       => $result->is_valid(),
+            'name'        => $result->name(),
+            'address'     => $result->address(),
+        ];
     }
 
     public function parse_address(string $address): array
@@ -61,7 +45,7 @@ class EU_VAT_API
         $cityLine   = $lines[1] ?? '';
 
         preg_match('/^(.*?)(\d+\s?\w*)$/', $streetLine, $streetMatches);
-        $street = trim($streetMatches[1] ?? '');
+        $street = trim($streetMatches[1] ?? $streetLine);
         $number = trim($streetMatches[2] ?? '');
 
         preg_match('/^(\d{4,5})\s+(.*)$/', $cityLine, $cityMatches);

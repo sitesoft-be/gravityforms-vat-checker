@@ -8,68 +8,64 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-10-24 00:00+0000\n"
-"PO-Revision-Date: 2024-10-24 00:00+0000\n"
+"PO-Revision-Date: 2026-10-09 00:00+0000\n"
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Domain: sitesoft-eu-vat\n"
 
-#: gravityforms-vat-checker.php:65
+#: gravityforms-vat-checker.php:74
 msgid "Name"
 msgstr "Naam"
 
-#: gravityforms-vat-checker.php:66
+#: gravityforms-vat-checker.php:75
 msgid "Street"
 msgstr "Straat"
 
-#: gravityforms-vat-checker.php:67
+#: gravityforms-vat-checker.php:76
 msgid "Zip code"
 msgstr "Postcode"
 
-#: gravityforms-vat-checker.php:68
+#: gravityforms-vat-checker.php:77
 msgid "City"
 msgstr "Stad"
 
-#: gravityforms-vat-checker.php:69
+#: gravityforms-vat-checker.php:78
 msgid "Country"
 msgstr "Land"
 
-#: gravityforms-vat-checker.php:74
+#: gravityforms-vat-checker.php:83
 msgid "Mapping fields (optional)"
 msgstr "Mappingvelden (optioneel)"
 
-#: gravityforms-vat-checker.php:83
+#: gravityforms-vat-checker.php:92
 msgid "Select a field"
 msgstr "Selecteer een veld"
 
-#: includes/class-ajax-handler.php:21
+#: includes/class-ajax-handler.php:16
+msgid "VAT number verification is temporarily unavailable. Please try again in a few moments."
+msgstr "De controle van het btw-nummer is momenteel tijdelijk niet beschikbaar. Probeer het over enkele ogenblikken opnieuw."
+
+#: includes/class-ajax-handler.php:43
 msgid "VAT number is empty"
 msgstr "Btw-nummer is leeg"
 
-#: includes/class-ajax-handler.php:30
-msgid "An error has occurred, please try again"
-msgstr "Er is een fout opgetreden, probeer het opnieuw"
-
-#: includes/class-ajax-handler.php:36
+#: includes/class-ajax-handler.php:59
 msgid "Invalid VAT number"
 msgstr "Ongeldig btw-nummer"
 
-#: includes/class-ajax-handler.php:43
+#: includes/class-ajax-handler.php:68
 msgid "Valid VAT number"
 msgstr "Geldig btw-nummer"
 
-#: includes/class-gf-field-euvat.php:29
-msgid "There is something wrong with the request."
-msgstr "Er is iets mis met het verzoek."
-
-#: includes/class-gf-field-euvat.php:37
+#: includes/class-gf-field-euvat.php:62
 msgid "The EU VAT number is invalid."
 msgstr "Het EU-btw-nummer is ongeldig."
 
-#: includes/class-gf-field-euvat.php:55
+#: includes/class-gf-field-euvat.php:84
 msgid "EU VAT Field"
 msgstr "EU-btw-veld"
 
-#: includes/class-gf-field-euvat.php:106
+#: includes/class-gf-field-euvat.php:136
 msgid "Separate tags with commas"
 msgstr "Scheid tags met komma's"
 

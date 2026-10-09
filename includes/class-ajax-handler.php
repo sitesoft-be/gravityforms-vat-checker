@@ -10,41 +10,67 @@ class AJAX_Handler
         add_action('wp_ajax_nopriv_validate_vat_number', [ $this, 'handle_ajax' ]);
     }
 
+    public static function temporary_error_message(): string
+    {
+        return __(
+            'VAT number verification is temporarily unavailable. Please try again in a few moments.',
+            'sitesoft-eu-vat',
+        );
+    }
+
     public function handle_ajax(): void
     {
-        check_ajax_referer('validate_vat_nonce', 'nonce');
+        $service = VAT_Validation_Service::instance();
 
-        $vat         = sanitize_text_field($_POST['vat'] ?? '');
-        $countryCode = sanitize_text_field($_POST['country_code'] ?? 'BE');
-        if (empty($vat)) {
+        if (! check_ajax_referer('validate_vat_nonce', 'nonce', false)) {
+            // Typically a cached page with an expired nonce. Technical, so never "invalid".
+            if ($service->logger()) {
+                $service->logger()->warning('ajax_nonce_failed', [ 'code' => 'NONCE' ]);
+            }
+
             wp_send_json_error([
+                'status'  => VAT_Result::TEMPORARY_ERROR,
+                'message' => self::temporary_error_message(),
+            ]);
+        }
+
+        $vat         = sanitize_text_field(wp_unslash($_POST['vat'] ?? ''));
+        $countryCode = sanitize_text_field(wp_unslash($_POST['country_code'] ?? 'BE'));
+
+        if ($vat === '') {
+            wp_send_json_error([
+                'status'  => VAT_Result::INVALID,
                 'message' => __('VAT number is empty', 'sitesoft-eu-vat'),
             ]);
         }
 
-        $vat_checker = new EU_VAT_API(urlencode($vat), $countryCode);
-        $results     = $vat_checker->get_results();
+        $result = $service->validate($countryCode, $vat, VAT_Validation_Service::CONTEXT_AJAX);
 
-        if (! $results) {
+        if ($result->is_temporary_error()) {
             wp_send_json_error([
-                'message' => __('An error has occurred, please try again', 'sitesoft-eu-vat'),
+                'status'  => VAT_Result::TEMPORARY_ERROR,
+                'message' => self::temporary_error_message(),
             ]);
         }
 
-        if (! $results->valid) {
+        if ($result->is_invalid()) {
             wp_send_json_error([
+                'status'  => VAT_Result::INVALID,
                 'message' => __('Invalid VAT number', 'sitesoft-eu-vat'),
             ]);
         }
 
-        $parsed_address = $vat_checker->parse_address($results->address);
+        $vat_api        = new EU_VAT_API($result->vat_number(), $result->country_code());
+        $parsed_address = $vat_api->parse_address($result->address());
 
         wp_send_json_success([
+            'status'      => VAT_Result::VALID,
             'message'     => __('Valid VAT number', 'sitesoft-eu-vat'),
-            'vatNumber'   => $results->vatNumber,
-            'countryCode' => $results->countryCode,
-            'name'        => $results->name,
+            'vatNumber'   => $result->vat_number(),
+            'countryCode' => $result->country_code(),
+            'name'        => $result->name(),
             'address'     => $parsed_address,
+            'token'       => $service->create_token($result),
         ]);
     }
 }
